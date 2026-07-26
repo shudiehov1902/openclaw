@@ -12,6 +12,7 @@ import { hasOperatorWriteAccess } from "../../app/operator-access.ts";
 import { renderAgentScopeControl } from "../../components/agent-scope-control.ts";
 import { t } from "../../i18n/index.ts";
 import { pathForSessionKey } from "../../lib/sessions/index.ts";
+import { resolveSessionNavigationAgentId } from "../../lib/sessions/route-navigation.ts";
 import {
   parseAgentSessionKey,
   resolveUiConfiguredMainKey,
@@ -284,6 +285,7 @@ class TasksPage extends OpenClawLightDomElement {
   }
 
   override render() {
+    const fallbackAgentId = resolveSessionNavigationAgentId(this.context);
     return html`
       <section class="content-header content-header--page">
         <div>
@@ -306,6 +308,7 @@ class TasksPage extends OpenClawLightDomElement {
       </section>
       ${renderTasks({
         basePath: this.context.basePath,
+        agentId: fallbackAgentId,
         mainKey: resolveUiConfiguredMainKey({
           agentsList: this.context.agents.state.agentsList,
           hello: this.context.gateway.snapshot.hello,
@@ -323,6 +326,7 @@ class TasksPage extends OpenClawLightDomElement {
             pathname: pathForSessionKey(
               "chat",
               sessionKey,
+              fallbackAgentId,
               this.context.basePath,
               undefined,
               resolveUiConfiguredMainKey({
